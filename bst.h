@@ -247,10 +247,9 @@ protected:
     // Provided helper functions
     virtual void printRoot (Node<Key, Value> *r) const;
     virtual void nodeSwap( Node<Key,Value>* n1, Node<Key,Value>* n2) ;
-
+    
     // Add helper functions here
-
-
+    Node<Key, Value>* getRoot() const;
 protected:
     Node<Key, Value>* root_;
     // You should not need other data members
@@ -376,16 +375,19 @@ template<class Key, class Value>
 BinarySearchTree<Key, Value>::BinarySearchTree() 
 {
     // TODO
-    root_ = NULL;
+    root_ = nullptr;
 }
-
 template<typename Key, typename Value>
 BinarySearchTree<Key, Value>::~BinarySearchTree()
 {
     // TODO
     clear();
 }
-
+template<class Key, class Value>
+Node<Key, Value>* BinarySearchTree<Key, Value>::getRoot() const
+{
+    return root_;
+}
 /**
  * Returns true if tree is empty
 */
@@ -587,21 +589,23 @@ void BinarySearchTree<Key, Value>::remove(const Key& key)
 template<class Key, class Value>
 Node<Key, Value>* BinarySearchTree<Key, Value>::predecessor(Node<Key, Value>* current)
 {
-    if (current == nullptr) return nullptr;
-    // current node has a left child
+    if (current == nullptr) 
+    {
+        return nullptr;
+    }
+    // Case 1: a left child, find the rightmost
     if (current->getLeft() != nullptr) 
     {
         Node<Key, Value>* predecessor = current->getLeft();
-        while (predecessor->getRight() != nullptr) //go right
+        while (predecessor->getRight() != nullptr) 
         {
             predecessor = predecessor->getRight();
         }
         return predecessor;
     }
-
-    // current node does not have a left child
+    // Case 2: not a left child, traverse up 
     Node<Key, Value>* parent = current->getParent();
-    while (parent != nullptr && current == parent->getLeft()) //first right child
+    while (parent != nullptr && current == parent->getLeft()) 
     {
         current = parent;
         parent = parent->getParent();
@@ -619,17 +623,23 @@ void BinarySearchTree<Key, Value>::clear()
 {
     // TODO
     clear_tree(root_);
-    root_ = nullptr;
 }
 template<typename Key, typename Value>
-void BinarySearchTree<Key, Value>::clear_tree(Node<Key, Value>* node)
+void BinarySearchTree<Key, Value>::clear_tree(Node<Key, Value>* root)
 {
-    if(node == nullptr ) return;
-    clear_tree(node->getRight());
-    clear_tree(node->getLeft());
-    delete node;
-    node = nullptr;
+    if (root == nullptr) {
+        return;
+    }
+    if(root->getLeft()!=nullptr)
+    clear_tree(root->getLeft());
+    if(root->getRight()!=nullptr)
+    clear_tree(root->getRight());
+    remove(root->getKey());
+    // delete root;
+    root = nullptr;
 }
+
+
 
 /**
 * A helper function to find the smallest node in the tree.

@@ -6,7 +6,7 @@
 using namespace std;
 
 
-int main(int argc, char *argv[])
+int main()
 {
     // Binary Search Tree tests
     BinarySearchTree<char,int> bt;
